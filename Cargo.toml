@@ -1,0 +1,41 @@
+[package]
+name = "over_civ"
+description = "OverCiv is a civilization styled 4x game"
+version = "0.1.0"
+authors = ["OvermindDL1 <overminddl1@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+# Base system dependencies
+log4rs = {version = "1.0", features = ["toml_format"]}
+tracing = {version = "0.1", features = ["attributes", "log", "log-always"]}
+structopt = "0.3"
+serde_derive = "1.0"
+serde = {version = "1.0", features=["derive"]}
+serde_json = "1.0"
+anyhow = "1.0"
+thiserror = "1.0"
+# Game Data dependencies
+indexmap = "1.6"
+smol_str = "0.1.17"
+rayon = "1.5"
+# Game Engine dependencies
+bevy = { version = "0.5", default_features = false, features = ["trace", "bevy_dynamic_plugin", "bevy_gltf"] }
+bevy_egui = { version = "0.4", optional = true }
+bevy-inspector-egui = { version = "0.4", optional = true }
+unic-langid = "0.9"
+intl-memoizer = "0.5"
+fluent-syntax = "0.11"
+fluent = "0.15"
+
+[features]
+default = ["client_wgpu"]
+client_wgpu = ["bevy/bevy_audio", "bevy/bevy_gilrs", "bevy/bevy_wgpu", "bevy/bevy_winit", "bevy/render", "bevy/png", "bevy/hdr", "bevy/mp3", "bevy/x11", "bevy_egui", "bevy-inspector-egui"]
+
+[lib]
+name = "over_civ"
+path = "src/lib.rs"
+
+[[bin]]
+name = "over_civ"
+path = "src/main.rs"
