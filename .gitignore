@@ -33,6 +33,7 @@
 
 # Documentation files
 !/README.md
+!/CODE_OF_CONDUCT.md
 
 # Build and format files
 !/Cargo.toml
