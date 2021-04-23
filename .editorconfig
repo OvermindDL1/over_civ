@@ -1,0 +1,7 @@
+[*]
+# Not a valid text file unless the final character is a newline
+insert_final_newline = true
+# Superior to Spaces due to greater accessibility and each user can use whatever spacing they want for an indent
+indent_style = tab
+# The only proper way of handling modern Unicode.
+charset = utf-8
