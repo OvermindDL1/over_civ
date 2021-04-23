@@ -59,15 +59,17 @@ impl Engine {
 		logger::init_logging(Some(self.config_dir.as_path()))?;
 		let mut app_builder = App::build();
 
-		app_builder.add_plugins(crate::universal::UniversalPlugin::default());
+		app_builder.add_plugins(crate::universal::UniversalPluginGroup::default());
 
 		// Make sure server is added before clients so its runner won't override the client runner
 		if self.include_server {
-			app_builder.add_plugins(crate::server::ServerPlugin::default());
+			#[cfg(feature = "server")]
+			app_builder.add_plugins(crate::server::ServerPluginGroup::default());
 		}
 
 		if self.include_client {
-			app_builder.add_plugins(crate::client::ClientPlugin::default());
+			#[cfg(feature = "client_wgpu")]
+			app_builder.add_plugins(crate::client::ClientPluginGroup::default());
 		}
 
 		runner(app_builder).map_err(|e| EngineError::CustomRunnerError(e))
