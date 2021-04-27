@@ -45,6 +45,7 @@ impl PluginGroup for UniversalPluginGroup {
 			})
 			.add(bevy::asset::AssetPlugin::default())
 			.add(bevy::scene::ScenePlugin::default())
+			.add(bevy::gltf::GltfPlugin::default())
 			.add(exit::ExitPlugin::default())
 			.add(i18n::I18NPlugin::new(self.language.clone()))
 			.add(local_server::LocalServerPlugin::default());
