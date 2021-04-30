@@ -53,7 +53,8 @@ impl I18N {
 	) -> Result<&mut Self, std::io::Error> {
 		for lang in self.bundles.iter().map(|b| b.locales.iter()).flatten() {
 			if language == *lang {
-				error!("Adding a language more than once: {}", &lang);
+				warn!("Adding a language more than once: {}", &lang);
+				return Ok(self);
 			}
 		}
 		let mut bundle = FluentBundle::new_concurrent(vec![language.clone()]);

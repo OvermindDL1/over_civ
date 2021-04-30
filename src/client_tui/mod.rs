@@ -1,7 +1,7 @@
-mod cursive_runner;
+mod tui_plugin;
 
 use crate::universal::exit::RequestExit;
-use bevy::app::PluginGroupBuilder;
+use bevy::app::{PluginGroupBuilder, ScheduleRunnerSettings};
 use bevy::prelude::*;
 use bevy::window::WindowCloseRequested;
 use std::time::Duration;
@@ -17,14 +17,15 @@ impl PluginGroup for ClientTuiPluginGroup {
 			.add(bevy::audio::AudioPlugin::default())
 			.add(bevy::gilrs::GilrsPlugin::default())
 			.add(bevy::app::ScheduleRunnerPlugin::default())
-			.add(cursive_runner::CursiveRunnerPlugin::default())
-			.add(ClientTuiPlugin);
+			.add(tui_plugin::TuiRunnerPlugin::default())
+			.add(ClientTuiPlugin)
+			.add(bevy::app::ScheduleRunnerPlugin::default());
 	}
 }
 
 impl Plugin for ClientTuiPlugin {
 	fn build(&self, app: &mut AppBuilder) {
-		app.insert_resource(cursive_runner::CursiveFPS::new(Duration::from_secs_f64(
+		app.insert_resource(ScheduleRunnerSettings::run_loop(Duration::from_secs_f64(
 			1.0 / 20.0,
 		)))
 		.add_system(exit_on_window_close.system());
