@@ -15,11 +15,25 @@ appenders:
     encoder:
       kind: pattern
       pattern: "{d} [{t}:{I}:{T}] {h({l})} {M}: {m}{n}"
+  log_file:
+    kind: launch_roll_file
+    path: log/current.log
+    launch_roller:
+      kind: fixed_window
+      count: 5
+      pattern: log/previous-{}.log
+    appender:
+      kind: file
+      path: log/current.log
+      encoder:
+        kind: pattern
+        pattern: "{d} [{t}:{I}:{T}] {h({l})} {M}: {m}{n}"
 
 root:
   level: trace
   appenders:
     - stdout
+    - log_file
 
 loggers:
   tracing::span:
