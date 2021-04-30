@@ -1,5 +1,7 @@
+mod states;
 mod tui_plugin;
 
+use crate::client_tui::tui_plugin::TUI;
 use crate::universal::exit::RequestExit;
 use bevy::app::{PluginGroupBuilder, ScheduleRunnerSettings};
 use bevy::input::keyboard::KeyboardInput;
@@ -11,6 +13,7 @@ use std::time::Duration;
 #[derive(Default)]
 pub struct ClientTuiPluginGroup;
 
+#[derive(Default)]
 struct ClientTuiPlugin;
 
 impl PluginGroup for ClientTuiPluginGroup {
@@ -22,11 +25,12 @@ impl PluginGroup for ClientTuiPluginGroup {
 			.add(
 				tui_plugin::TuiRunnerPlugin::default()
 					.title(env!("CARGO_PKG_NAME"))
-					.start_in_raw_mode(true)
 					.start_with_mouse_captured(true)
+					.start_in_raw_mode(true)
 					.enable_alternate_screen(true)
 					.max_events_per_tick(128),
 			)
+			.add(states::ClientStatePlugin::default())
 			.add(ClientTuiPlugin)
 			.add(bevy::app::ScheduleRunnerPlugin::default());
 	}
@@ -38,7 +42,8 @@ impl Plugin for ClientTuiPlugin {
 			1.0 / 20.0,
 		)))
 		.add_system(exit_on_window_close.system())
-		.add_system(exit_on_escape.system());
+		.add_system(exit_on_escape.system())
+		.add_system_to_stage(CoreStage::PostUpdate, draw.exclusive_system());
 	}
 }
 
@@ -59,5 +64,22 @@ fn exit_on_window_close(
 	if let Some(window_closed) = windows_closed.iter().next() {
 		trace!("Window closed `{:?}`: exiting", window_closed.id);
 		exit.send(RequestExit);
+	}
+}
+
+fn draw(world: &mut World) {
+	let world = world.cell();
+	let mut tui = world.get_resource_mut::<TUI>().unwrap();
+	let cur_state = world
+		.get_resource::<State<states::ClientState>>()
+		.unwrap()
+		.current()
+		.clone();
+
+	match tui.draw(|f| {
+		cur_state.draw(&world, f);
+	}) {
+		Ok(()) => (),
+		Err(e) => error!("failed TUI draw call: {:?}", e),
 	}
 }

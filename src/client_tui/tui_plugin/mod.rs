@@ -12,8 +12,8 @@ use std::borrow::Cow;
 use std::time::Duration;
 use tui::backend::CrosstermBackend;
 
-type Terminal = tui::Terminal<CrosstermBackend<std::io::Stdout>>;
-type Frame<'a> = tui::Frame<'a, CrosstermBackend<std::io::Stdout>>;
+pub type Terminal = tui::Terminal<CrosstermBackend<std::io::Stdout>>;
+pub type Frame<'a> = tui::Frame<'a, CrosstermBackend<std::io::Stdout>>;
 
 /// Terminal User Interface wrapping resource.  Acquire the usual way to create your own drawing
 /// callback.  This uses `NonSend` as only one thread can write to the screen at a time.
@@ -61,6 +61,10 @@ impl TUI {
 	#[allow(dead_code)]
 	pub fn get_frame(&mut self) -> Frame {
 		self.terminal.get_frame()
+	}
+
+	pub fn draw(&mut self, f: impl FnOnce(&mut Frame)) -> std::io::Result<()> {
+		self.terminal.draw(f)
 	}
 
 	/// Try to set raw mode on the `stdout` output, returns a result for success or failure.

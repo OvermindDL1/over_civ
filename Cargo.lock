@@ -2853,6 +2853,7 @@ dependencies = [
  "log4rs",
  "rayon",
  "serde",
+ "serde-value",
  "serde_derive",
  "serde_json",
  "smol_str",

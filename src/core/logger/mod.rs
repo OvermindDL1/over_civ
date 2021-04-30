@@ -1,6 +1,8 @@
+mod launch_roll_file_appender;
+
 use log4rs::append::console::{ConsoleAppender, Target};
 use log4rs::config::runtime::ConfigErrors;
-use log4rs::config::{Appender, Config, Logger, Root};
+use log4rs::config::{Appender, Config, Deserializers, Logger, Root};
 use log4rs::encode::pattern::PatternEncoder;
 use std::path::{Path, PathBuf};
 use tracing::log::{LevelFilter, SetLoggerError};
@@ -79,7 +81,12 @@ pub fn init_logging(config_dir: Option<&Path>) -> Result<(), Error> {
 				}
 				path
 			};
-			log4rs::init_file(logger_config, Default::default())?;
+			let mut deserializers = Deserializers::new();
+			deserializers.insert(
+				"launch_roll_file",
+				launch_roll_file_appender::RollFileOnLaunchAppenderDeserializer,
+			);
+			log4rs::init_file(logger_config, deserializers)?;
 		}
 		None => {
 			let stderr = ConsoleAppender::builder()
