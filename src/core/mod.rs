@@ -1,3 +1,4 @@
+use bevy::asset::AssetServerSettings;
 /// The `crates::core` module is for the code that is used to set up everything else, but then is
 /// not touched by anything else.  The code here is minimal.
 use bevy::prelude::*;
@@ -86,6 +87,15 @@ impl Engine {
 	) -> Result<Out, EngineError<Err>> {
 		logger::init_logging(Some(self.config_dir.as_path()))?;
 		let mut app_builder = App::build();
+
+		let asset_folder = std::env::current_dir()
+			.map(|mut p| {
+				p.push("assets");
+				p.to_string_lossy().to_string()
+			})
+			.unwrap_or_else(|_| "assets".to_owned());
+		info!("Setting base assets directory to: {:?}", &asset_folder);
+		app_builder.insert_resource(AssetServerSettings { asset_folder });
 
 		app_builder.add_plugins(crate::universal::UniversalPluginGroup::default());
 
