@@ -2,12 +2,14 @@ mod states;
 mod tui_plugin;
 
 use crate::client_tui::tui_plugin::TUI;
+use crate::universal::conditional_map::ConditionalMap;
 use crate::universal::exit::RequestExit;
 use bevy::app::{PluginGroupBuilder, ScheduleRunnerSettings};
 use bevy::input::keyboard::KeyboardInput;
 use bevy::input::ElementState;
 use bevy::prelude::*;
 use bevy::window::WindowCloseRequested;
+use std::sync::atomic::Ordering;
 use std::time::Duration;
 
 #[derive(Default)]
@@ -18,6 +20,10 @@ struct ClientTuiPlugin;
 
 impl PluginGroup for ClientTuiPluginGroup {
 	fn build(&mut self, group: &mut PluginGroupBuilder) {
+		trace!("disabling `console` conditional map for the logger");
+		tracing::log::logger().flush();
+		ConditionalMap::get_or_create_by_id("console".to_owned(), false)
+			.store(false, Ordering::Relaxed);
 		group
 			.add(bevy::audio::AudioPlugin::default())
 			.add(bevy::gilrs::GilrsPlugin::default())

@@ -2850,6 +2850,7 @@ dependencies = [
  "fluent-syntax",
  "indexmap",
  "intl-memoizer",
+ "lazy_static",
  "log4rs",
  "rayon",
  "serde",
