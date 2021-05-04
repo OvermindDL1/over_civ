@@ -1,6 +1,5 @@
 use anyhow::Context;
-use over_civ::core::ClientType;
-use over_civ::prelude::*;
+use over_civ::{core::ClientType, prelude::*};
 use std::path::PathBuf;
 use structopt::StructOpt;
 use tracing::log::LevelFilter;
