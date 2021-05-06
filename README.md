@@ -31,7 +31,7 @@ sudo dnf install gcc-c++ libX11-devel alsa-lib-devel systemd-devel
 ##### Pacman-based distributions (Arch/Manjaro/Etc...)
 
 ```zsh
-sudo pacman -S libx11 pkgconf alsa-lib
+sudo pacman -S libx11 pkgconf alsa-lib lld
 ```
 
 ##### Solus
