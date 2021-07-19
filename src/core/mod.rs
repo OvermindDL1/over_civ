@@ -7,6 +7,7 @@ use std::path::PathBuf;
 use tracing::log::LevelFilter;
 
 mod logger;
+mod map;
 
 /// Possible errors returned from the Engine
 #[derive(thiserror::Error, Debug)]
