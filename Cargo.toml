@@ -33,6 +33,9 @@ fluent = "0.15"
 crossterm = { version = "0.19", optional = true}
 tui = { version = "0.14", default-features = false, features = ['crossterm'], optional = true }
 
+[dev-dependencies]
+proptest = "1.0"
+
 [features]
 default = ["client_tui", "client_wgpu", "server"]
 client_wgpu = ["bevy/bevy_audio", "bevy/bevy_gilrs", "bevy/bevy_wgpu", "bevy/bevy_winit", "bevy/render", "bevy/png", "bevy/hdr", "bevy/mp3", "bevy/x11", "bevy_egui", "bevy-inspector-egui"]
