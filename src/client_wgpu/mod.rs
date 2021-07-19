@@ -1,17 +1,18 @@
 mod states;
 
 use crate::universal::exit::RequestExit;
-use crate::universal::I18N;
+use crate::universal::i18n::{I18nLanguageChangedEvent, MsgKey0};
+use crate::universal::I18n;
 use bevy::app::PluginGroupBuilder;
 use bevy::prelude::*;
 use bevy::window::WindowCloseRequested;
 
 #[derive(Default)]
-pub struct ClientPluginGroup;
+pub struct ClientWgpuPluginGroup;
 
-struct ClientPlugin;
+struct ClientWgpuPlugin;
 
-impl PluginGroup for ClientPluginGroup {
+impl PluginGroup for ClientWgpuPluginGroup {
 	fn build(&mut self, group: &mut PluginGroupBuilder) {
 		group
 			.add(bevy::render::RenderPlugin::default())
@@ -24,15 +25,16 @@ impl PluginGroup for ClientPluginGroup {
 			.add(bevy::gltf::GltfPlugin::default())
 			.add(bevy::winit::WinitPlugin::default())
 			.add(bevy::wgpu::WgpuPlugin::default())
-			.add(ClientPlugin)
+			.add(ClientWgpuPlugin)
 			.add(states::ClientStatePlugin::default());
 	}
 }
 
-impl Plugin for ClientPlugin {
+impl Plugin for ClientWgpuPlugin {
 	fn build(&self, app: &mut AppBuilder) {
 		app.insert_resource(ClearColor(Color::rgb(0.0, 0.25, 0.0)))
 			.add_startup_system(startup.system())
+			.add_system(update_window_title_from_language.system())
 			.add_system(exit_on_window_close.system());
 	}
 }
@@ -48,14 +50,30 @@ fn exit_on_window_close(
 	}
 }
 
-fn startup(mut windows: ResMut<Windows>, lang: Res<I18N>) {
-	trace!("Client startup");
-	let l_title = lang.get("title");
+fn startup(mut windows: ResMut<Windows>) {
+	let title = env!("CARGO_PKG_NAME");
+	trace!("client_wgpu startup, setting title: {}", title);
 	windows.iter_mut().for_each(|window| {
-		window.set_title(l_title.to_string());
+		window.set_title(title.to_owned());
 	});
 
 	// This spawns the camera that renders the 2D Bevy UI over the whole screen, not using bevy's UI
 	// currently, so its disabled for now...
 	// commands.spawn_bundle(UiCameraBundle::default());
+}
+
+const L_TITLE: MsgKey0 = MsgKey0::new("title");
+
+fn update_window_title_from_language(
+	mut windows: ResMut<Windows>,
+	lang: Res<I18n>,
+	mut event: EventReader<I18nLanguageChangedEvent>,
+) {
+	if event.iter().next().is_some() {
+		let l_title = L_TITLE.translate(&*lang).into_owned();
+		trace!("client_wgpu title set on language change: {}", &l_title);
+		windows.iter_mut().for_each(|window| {
+			window.set_title(l_title.clone());
+		});
+	}
 }
