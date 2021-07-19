@@ -1,9 +1,17 @@
+use std::collections::HashSet;
+
+use bevy::ecs::prelude::Entity;
+
 use super::coord::Coord;
 
-pub struct Tile {}
+pub struct Tile {
+	entities: HashSet<Entity>,
+}
 
 impl Tile {
 	pub fn new() -> Tile {
-		Tile {}
+		Tile {
+			entities: HashSet::default(),
+		}
 	}
 }
